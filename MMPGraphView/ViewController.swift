@@ -10,9 +10,75 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet var storyboardGraphView: MMPGraphView!
+    var programmaticGraphView:MMPGraphView!
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        // Create the first data set and associate it with the graph in the storyboard
+        let primaryDataSet = MMPGraphDataSet(title: "Weight",
+                                             dataPoints: [MMPTestData(title: "5", value: 365),
+                                                MMPTestData(title: "8", value: 365),
+                                                MMPTestData(title: "10", value: 385),
+                                                MMPTestData(title: "7", value: 385),
+                                                MMPTestData(title: "8", value: 405)],
+                                             color: UIColor.whiteColor())
+        
+        let secondaryDataSet = MMPGraphDataSet(title: "Reps",
+                                               dataPoints: [MMPTestData(title: "5", value: 6),
+                                                MMPTestData(title: "8", value: 4),
+                                                MMPTestData(title: "10", value: 6),
+                                                MMPTestData(title: "7", value: 4),
+                                                MMPTestData(title: "8", value: 2)],
+                                               color: UIColor.blueColor())
+        
+        let dataPlot = MMPGraphDataPlot(title: "Weight vs Reps", primaryDataSet: primaryDataSet, secondaryDataSet:secondaryDataSet)
+        storyboardGraphView.dataPlots = [dataPlot]
+        
+        
+        // Create the second, manual graph view example
+        let TWOprimaryDataSet = MMPGraphDataSet(title: "One",
+                                             dataPoints: [MMPTestData(title: "5", value: 365),
+                                                MMPTestData(title: "8", value: 365),
+                                                MMPTestData(title: "10", value: 385),
+                                                MMPTestData(title: "7", value: 385),
+                                                MMPTestData(title: "8", value: 405)],
+                                             color: UIColor.whiteColor())
+        
+        let TWOsecondaryDataSet = MMPGraphDataSet(title: "Two",
+                                               dataPoints: [MMPTestData(title: "5", value: 6),
+                                                MMPTestData(title: "8", value: 4),
+                                                MMPTestData(title: "10", value: 6),
+                                                MMPTestData(title: "7", value: 4),
+                                                MMPTestData(title: "8", value: 2)],
+                                               color: UIColor.blueColor())
+        let TWOdataPlot = MMPGraphDataPlot(title: "Plot 1", primaryDataSet: TWOprimaryDataSet, secondaryDataSet:TWOsecondaryDataSet)
+        
+        let THRprimaryDataSet = MMPGraphDataSet(title: "Three",
+                                                dataPoints: [MMPTestData(title: "1/10", value: 1029),
+                                                    MMPTestData(title: "1/11", value: 987),
+                                                    MMPTestData(title: "1/14", value: 350),
+                                                    MMPTestData(title: "1/18", value: 444),
+                                                    MMPTestData(title: "1/22", value: 605)],
+                                                color: UIColor.whiteColor())
+        
+        let THRsecondaryDataSet = MMPGraphDataSet(title: "Four",
+                                                  dataPoints: [MMPTestData(title: "5", value: 6),
+                                                    MMPTestData(title: "8", value: 4),
+                                                    MMPTestData(title: "10", value: 6),
+                                                    MMPTestData(title: "7", value: 4),
+                                                    MMPTestData(title: "8", value: 2)],
+                                                  color: UIColor.blueColor())
+        let THRdataPlot = MMPGraphDataPlot(title: "Plot 2", primaryDataSet: THRsecondaryDataSet, secondaryDataSet:THRprimaryDataSet)
+
+        let graphFrame  = CGRect(x: 20.0, y: CGRectGetMaxY(storyboardGraphView.frame) + 50.0, width: CGRectGetWidth(self.view.bounds)-40.0, height: 300)
+        programmaticGraphView = MMPGraphView.newGraphView(graphFrame, dataPlots: [TWOdataPlot, THRdataPlot], delegate: nil)
+        view.addSubview(programmaticGraphView)
     }
 
     override func didReceiveMemoryWarning() {
