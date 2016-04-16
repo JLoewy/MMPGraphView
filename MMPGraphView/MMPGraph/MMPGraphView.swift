@@ -36,6 +36,11 @@ extension NSString
     @IBInspectable var startColor:UIColor = UIColor(red: 128.0/255.0, green: 182.0/255.0, blue: 248.0/255.0, alpha: 1.0)
     @IBInspectable var endColor:UIColor   = UIColor(red: 50.0/255.0, green: 118.0/255.0, blue: 255.0/255.0, alpha: 1.0)
     
+    // Loading Variables
+    var currentlyLoading    = false
+    let loadingActivityView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    let loadingDimView      = UIView(frame: CGRectZero)
+    
     var delegate:MMPGraphDelegate?;
     
     var showTouchTitle  = true
@@ -45,7 +50,7 @@ extension NSString
     var titleLabel:UILabel = UILabel()
     var mainTitleText      = NSAttributedString(string: "")
     
-    var dataPlots:[MMPGraphDataPlot]!
+    var dataPlots      = [MMPGraphDataPlot]()
     var currentPlotIdx = 0
     var plotSegmentedController:UISegmentedControl?
     
@@ -63,7 +68,14 @@ extension NSString
     static func newGraphView(frame: CGRect, dataPlots:[MMPGraphDataPlot], delegate:MMPGraphDelegate?)->MMPGraphView
     {
         return MMPGraphView(frame: frame, dataPlots: dataPlots, delegate: delegate)
+    }
     
+    static func newLoadingGraphView(frame:CGRect, delegate:MMPGraphDelegate?)->MMPGraphView
+    {
+        let graphView              = MMPGraphView(frame: frame, dataPlots: [MMPGraphDataPlot](), delegate: delegate)
+        graphView.currentlyLoading = true
+        
+        return graphView
     }
     
     private init(frame: CGRect, dataPlots:[MMPGraphDataPlot], delegate:MMPGraphDelegate?) {
@@ -104,6 +116,16 @@ extension NSString
             plotSegmentedController!.selectedSegmentIndex = 0
             addSubview(plotSegmentedController!)
         }
+        
+        // Initialize all of the loading indicator objects
+        loadingDimView.frame           = bounds
+        loadingDimView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
+        loadingDimView.hidden          = true
+
+        loadingActivityView.tintColor        = UIColor.whiteColor()
+        loadingActivityView.hidesWhenStopped = true
+        loadingDimView.addSubview(loadingActivityView)
+        addSubview(loadingDimView)
     }
     
     
@@ -112,27 +134,39 @@ extension NSString
     override func layoutSubviews() {
         
         super.layoutSubviews()
-        let labelWidth            = CGRectGetWidth(bounds) * 0.5
-        let titleYPadding:CGFloat = 8.0
-        let labelHeight:CGFloat   = 26.0
-        titleLabel.frame          = CGRect(x: (CGRectGetWidth(bounds)*0.25), y: titleYPadding, width: labelWidth, height: labelHeight)
+        let labelWidth             = CGRectGetWidth(bounds) * 0.5
+        let titleYPadding:CGFloat  = 8.0
+        let labelHeight:CGFloat    = 26.0
+        titleLabel.frame           = CGRect(x: (CGRectGetWidth(bounds)*0.25), y: titleYPadding, width: labelWidth, height: labelHeight)
+        
+        loadingDimView.frame       = bounds
+        loadingActivityView.center = CGPoint(x: loadingDimView.bounds.width/2.0, y: loadingDimView.bounds.height/2.0)
     }
     
     // Only override drawRect: if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
     override func drawRect(rect: CGRect) {
         
-        // Set up the title text
-        // This is in draw rect becuase it needs to get reset everytime that the segmented controller value changes
-        if let secondaryData = dataPlots[currentPlotIdx].secondaryDataSet
+        if currentPlotIdx < dataPlots.count
         {
-            let primaryDataSet = dataPlots[currentPlotIdx].primaryDataSet
-            let titleAttributeText = NSMutableAttributedString(string: "\(primaryDataSet.dataTitle) vs \(secondaryData.dataTitle)",
-                                                               attributes: [NSFontAttributeName : boldFont,
-                                                                NSForegroundColorAttributeName : UIColor.whiteColor()])
-            titleAttributeText.addAttributes([NSForegroundColorAttributeName:primaryDataSet.color], range: NSMakeRange(0, primaryDataSet.dataTitle.characters.count))
-            titleAttributeText.addAttributes([NSForegroundColorAttributeName:secondaryData.color], range: NSMakeRange(primaryDataSet.dataTitle.characters.count + 4, secondaryData.dataTitle.characters.count))
-            mainTitleText = titleAttributeText
+            // Set up the title text
+            // This is in draw rect becuase it needs to get reset everytime that the segmented controller value changes
+            if let secondaryData = dataPlots[currentPlotIdx].secondaryDataSet
+            {
+                let primaryDataSet = dataPlots[currentPlotIdx].primaryDataSet
+                let titleAttributeText = NSMutableAttributedString(string: "\(primaryDataSet.dataTitle) vs \(secondaryData.dataTitle)",
+                                                                   attributes: [NSFontAttributeName : boldFont,
+                                                                    NSForegroundColorAttributeName : UIColor.whiteColor()])
+                titleAttributeText.addAttributes([NSForegroundColorAttributeName:primaryDataSet.color], range: NSMakeRange(0, primaryDataSet.dataTitle.characters.count))
+                titleAttributeText.addAttributes([NSForegroundColorAttributeName:secondaryData.color], range: NSMakeRange(primaryDataSet.dataTitle.characters.count + 4, secondaryData.dataTitle.characters.count))
+                mainTitleText = titleAttributeText
+            }
+            else {
+                mainTitleText = NSAttributedString(string: "\(dataPlots[currentPlotIdx].primaryDataSet.dataTitle)", attributes: [NSFontAttributeName : boldFont, NSForegroundColorAttributeName : UIColor.whiteColor()])
+            }
+        }
+        else {
+            mainTitleText = NSAttributedString(string: "")
         }
         titleLabel.attributedText = mainTitleText
         
@@ -148,7 +182,7 @@ extension NSString
         }
         graphInsetFrame.origin.x    = bounds.width  * 0.125
         graphInsetFrame.size.width  = CGRectGetWidth(bounds) - (graphInsetFrame.origin.x * 2.0)
-        let columnWidth:CGFloat     = graphInsetFrame.width / max(1,(CGFloat(dataPlots[currentPlotIdx].primaryDataSet.dataPoints.count)) - 1.0)
+        let columnWidth:CGFloat     = (currentPlotIdx < dataPlots.count) ? (graphInsetFrame.width / max(1,(CGFloat(dataPlots[currentPlotIdx].primaryDataSet.dataPoints.count)) - 1.0)) : 0
         
         // Now that you have the inset bounds calculated you can layout the segmented controller to sit right underneath it
         if let segmentedController = plotSegmentedController {
@@ -159,7 +193,7 @@ extension NSString
         let context:CGContext?  = UIGraphicsGetCurrentContext()
         let colorRGB = CGColorSpaceCreateDeviceRGB()
         let gradiant = CGGradientCreateWithColors(colorRGB,
-            [startColor.CGColor, endColor.CGColor], [0.0,1.0])
+                                                  [startColor.CGColor, endColor.CGColor], [0.0,1.0])
         CGContextDrawLinearGradient(context, gradiant, CGPointZero, CGPoint(x: 0, y: self.bounds.height), .DrawsBeforeStartLocation)
         
         // MARK: - column X|Y positioning closures
@@ -176,7 +210,8 @@ extension NSString
         }
         
         // Draw the actual data plots
-        if dataPlots[currentPlotIdx].primaryDataSet.dataPoints.count > 0
+        loadingDimView.hidden = true
+        if currentPlotIdx < dataPlots.count && dataPlots[currentPlotIdx].primaryDataSet.dataPoints.count > 0
         {
             var dataSets = [self.dataPlots[currentPlotIdx].primaryDataSet];
             if let secondDataSet = self.dataPlots[currentPlotIdx].secondaryDataSet {
@@ -194,11 +229,11 @@ extension NSString
                 // Move to the start add the main graph plot
                 let graphPath = UIBezierPath()
                 graphPath.moveToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, 0),
-                                              y: columnYPosition(currentDataSet.dataPoints[0].mmpGraphValue(), minValue, maxValue)))
+                    y: columnYPosition(currentDataSet.dataPoints[0].mmpGraphValue(), minValue, maxValue)))
                 for i in 1..<currentDataSet.dataPoints.count
                 {
                     graphPath.addLineToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, CGFloat(i)),
-                                                     y: columnYPosition(currentDataSet.dataPoints[i].mmpGraphValue(), minValue, maxValue)))
+                        y: columnYPosition(currentDataSet.dataPoints[i].mmpGraphValue(), minValue, maxValue)))
                 }
                 
                 // Stroke the main graph plot
@@ -309,7 +344,7 @@ extension NSString
                         titleLabel.font      = boldFont
                         titleLabel.text      = currentDataSet.dataPoints[xIndex].mmpGraphTitle()
                         titleLabel.textAlignment = .Center
-
+                        
                         let xOrigin:CGFloat = columnXPosition(currentDataSet.dataPoints, CGFloat(xIndex)) - (xLabelWidth/2.0)
                         let yOrigin:CGFloat = CGRectGetMaxY(graphInsetFrame) + 10.0
                         titleLabel.drawTextInRect(CGRect(x: xOrigin, y: yOrigin, width: xLabelWidth, height: 20.0))
@@ -329,12 +364,18 @@ extension NSString
             borderBezier.lineWidth = 1.0
             borderBezier.stroke()
             
-            let noneLabel       = UILabel()
-            noneLabel.text      = "No Data Available"
-            noneLabel.textColor = UIColor.whiteColor()
-            noneLabel.font      = UIFont.systemFontOfSize(30.0)
-            noneLabel.sizeToFit()
-            noneLabel.drawTextInRect(CGRect(x: bounds.width / 2.0 - noneLabel.bounds.width / 2.0, y: bounds.height / 2.0 - noneLabel.bounds.height, width: noneLabel.bounds.width, height: noneLabel.bounds.height))
+            if !currentlyLoading {
+                let noneLabel       = UILabel()
+                noneLabel.text      = "No Data Available"
+                noneLabel.textColor = UIColor.whiteColor()
+                noneLabel.font      = UIFont.systemFontOfSize(30.0)
+                noneLabel.sizeToFit()
+                noneLabel.drawTextInRect(CGRect(x: bounds.width / 2.0 - noneLabel.bounds.width / 2.0, y: bounds.height / 2.0 - noneLabel.bounds.height, width: noneLabel.bounds.width, height: noneLabel.bounds.height))
+            }
+            else {
+                loadingActivityView.startAnimating()
+                loadingDimView.hidden = false
+            }
         }
     }
     
@@ -356,7 +397,7 @@ extension NSString
         }
         
         for i in 0..<(curArray.count/2)
-        {    
+        {
             let valueA = curArray[i*2]
             let valueB = curArray[i*2+1]
             

@@ -77,8 +77,16 @@ class ViewController: UIViewController {
         let THRdataPlot = MMPGraphDataPlot(title: "Plot 2", primaryDataSet: THRsecondaryDataSet, secondaryDataSet:THRprimaryDataSet)
 
         let graphFrame  = CGRect(x: 20.0, y: CGRectGetMaxY(storyboardGraphView.frame) + 50.0, width: CGRectGetWidth(self.view.bounds)-40.0, height: 300)
-        programmaticGraphView = MMPGraphView.newGraphView(graphFrame, dataPlots: [TWOdataPlot, THRdataPlot], delegate: nil)
+//        programmaticGraphView = MMPGraphView.newGraphView(graphFrame, dataPlots: [TWOdataPlot, THRdataPlot], delegate: nil)
+        
+        programmaticGraphView = MMPGraphView.newLoadingGraphView(graphFrame, delegate: nil)
         view.addSubview(programmaticGraphView)
+        
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.programmaticGraphView.dataPlots = [TWOdataPlot, THRdataPlot]
+            self.programmaticGraphView.setNeedsDisplay()
+        }
     }
 
     override func didReceiveMemoryWarning() {
