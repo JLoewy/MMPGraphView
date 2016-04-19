@@ -8,13 +8,17 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MMPGraphDelegate {
 
     @IBOutlet var storyboardGraphView: MMPGraphView!
     var programmaticGraphView:MMPGraphView!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return .Portrait
     }
     
     override func viewDidLoad() {
@@ -75,25 +79,38 @@ class ViewController: UIViewController {
                                                     MMPTestData(title: "8", value: 2)],
                                                   color: UIColor.blueColor())
         let THRdataPlot = MMPGraphDataPlot(title: "Plot 2", primaryDataSet: THRsecondaryDataSet, secondaryDataSet:THRprimaryDataSet)
+        
+        let FVprimaryDataSet = MMPGraphDataSet(title: "Five",
+                                                  dataPoints: [MMPTestData(title: "5", value: 6),
+                                                    MMPTestData(title: "8", value: 4),
+                                                    MMPTestData(title: "10", value: 6),
+                                                    MMPTestData(title: "7", value: 4),
+                                                    MMPTestData(title: "8", value: 2)],
+                                                  color: UIColor.whiteColor())
+        let FVdataPlot = MMPGraphDataPlot(title: "Single Plot", primaryDataSet: FVprimaryDataSet, secondaryDataSet:nil)
+        
+        
 
         let graphFrame  = CGRect(x: 20.0, y: CGRectGetMaxY(storyboardGraphView.frame) + 50.0, width: CGRectGetWidth(self.view.bounds)-40.0, height: 300)
 //        programmaticGraphView = MMPGraphView.newGraphView(graphFrame, dataPlots: [TWOdataPlot, THRdataPlot], delegate: nil)
         
-        programmaticGraphView = MMPGraphView.newLoadingGraphView(graphFrame, delegate: nil)
+        programmaticGraphView = MMPGraphView.newLoadingGraphView(graphFrame, delegate: self)
+        programmaticGraphView.titleAlignment = .Left
         view.addSubview(programmaticGraphView)
         
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) {
-            self.programmaticGraphView.dataPlots = [TWOdataPlot, THRdataPlot]
-            self.programmaticGraphView.setNeedsDisplay()
+            self.programmaticGraphView.finishLoading([TWOdataPlot, THRdataPlot, FVdataPlot])
         }
     }
+    
+    // MARK: - MMPGraphDelegate Methods
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func showFullScreenGraph(graphView: MMPGraphView) {
+        
+        let graphViewController = MMPGraphViewController(graphView: graphView) // MMPGraphViewController(dataPlots: graphView.dataPlots)
+        showViewController(graphViewController, sender: self)
+        
     }
-
-
 }
 

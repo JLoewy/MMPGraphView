@@ -18,5 +18,12 @@ import UIKit
      - parameter graphDataAverage: the cgfloat value of the average
      - parameter dataSet:          the MMPGraphDataSet whos average was just calculated
      */
-    func averageCalculated(graphView:MMPGraphView, graphDataAverage:CGFloat, dataSet:MMPGraphDataSet);
+    optional func averageCalculated(graphView:MMPGraphView, graphDataAverage:CGFloat, dataSet:MMPGraphDataSet)
+    
+    /**
+     Responsible for letting the delegate know that the user wants this graph to be presented in full screen mode
+     
+     - parameter graphView: The currently active MMPGraphView
+     */
+    optional func showFullScreenGraph(graphView:MMPGraphView)
 }

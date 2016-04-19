@@ -7,20 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		037BFF061CBE1F470056A024 /* MMPGraphDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037BFF051CBE1F470056A024 /* MMPGraphDelegate.swift */; };
+		0319604E1CC5F29200A56782 /* MMPGraphViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0319604D1CC5F29200A56782 /* MMPGraphViewController.swift */; };
+		031960521CC5FC2D00A56782 /* MMPMedia.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 031960511CC5FC2D00A56782 /* MMPMedia.xcassets */; };
+		037ABD671CC5BB7A00BE05CC /* MMPGraphView+Visuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037ABD661CC5BB7A00BE05CC /* MMPGraphView+Visuals.swift */; };
+		037ABD6D1CC5C0CF00BE05CC /* MMPGraphDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037ABD6A1CC5C0CF00BE05CC /* MMPGraphDataPoint.swift */; };
+		037ABD6E1CC5C0CF00BE05CC /* MMPGraphDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037ABD6B1CC5C0CF00BE05CC /* MMPGraphDataSet.swift */; };
+		037ABD6F1CC5C0CF00BE05CC /* MMPGraphDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037ABD6C1CC5C0CF00BE05CC /* MMPGraphDelegate.swift */; };
 		037D04AE1CBB694700AE0C83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04AD1CBB694700AE0C83 /* AppDelegate.swift */; };
 		037D04B01CBB694700AE0C83 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04AF1CBB694700AE0C83 /* ViewController.swift */; };
 		037D04B31CBB694700AE0C83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 037D04B11CBB694700AE0C83 /* Main.storyboard */; };
 		037D04B51CBB694700AE0C83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 037D04B41CBB694700AE0C83 /* Assets.xcassets */; };
 		037D04B81CBB694700AE0C83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 037D04B61CBB694700AE0C83 /* LaunchScreen.storyboard */; };
-		037D04CB1CBB697800AE0C83 /* MMPGraphDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04C81CBB697800AE0C83 /* MMPGraphDataPoint.swift */; };
-		037D04CC1CBB697800AE0C83 /* MMPGraphDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04C91CBB697800AE0C83 /* MMPGraphDataSet.swift */; };
 		037D04CD1CBB697800AE0C83 /* MMPGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04CA1CBB697800AE0C83 /* MMPGraphView.swift */; };
 		037D04D11CBB6A9A00AE0C83 /* MMPTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037D04D01CBB6A9A00AE0C83 /* MMPTestData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		037BFF051CBE1F470056A024 /* MMPGraphDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPGraphDelegate.swift; sourceTree = "<group>"; };
+		0319604D1CC5F29200A56782 /* MMPGraphViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPGraphViewController.swift; sourceTree = "<group>"; };
+		031960511CC5FC2D00A56782 /* MMPMedia.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = MMPMedia.xcassets; path = Resources/MMPMedia.xcassets; sourceTree = "<group>"; };
+		037ABD661CC5BB7A00BE05CC /* MMPGraphView+Visuals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MMPGraphView+Visuals.swift"; path = "Extensions/MMPGraphView+Visuals.swift"; sourceTree = "<group>"; };
+		037ABD6A1CC5C0CF00BE05CC /* MMPGraphDataPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MMPGraphDataPoint.swift; path = Data/MMPGraphDataPoint.swift; sourceTree = "<group>"; };
+		037ABD6B1CC5C0CF00BE05CC /* MMPGraphDataSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MMPGraphDataSet.swift; path = Data/MMPGraphDataSet.swift; sourceTree = "<group>"; };
+		037ABD6C1CC5C0CF00BE05CC /* MMPGraphDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MMPGraphDelegate.swift; path = Data/MMPGraphDelegate.swift; sourceTree = "<group>"; };
 		037D04AA1CBB694700AE0C83 /* MMPGraphView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMPGraphView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		037D04AD1CBB694700AE0C83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		037D04AF1CBB694700AE0C83 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -28,8 +36,6 @@
 		037D04B41CBB694700AE0C83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		037D04B71CBB694700AE0C83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		037D04B91CBB694700AE0C83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		037D04C81CBB697800AE0C83 /* MMPGraphDataPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPGraphDataPoint.swift; sourceTree = "<group>"; };
-		037D04C91CBB697800AE0C83 /* MMPGraphDataSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPGraphDataSet.swift; sourceTree = "<group>"; };
 		037D04CA1CBB697800AE0C83 /* MMPGraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPGraphView.swift; sourceTree = "<group>"; };
 		037D04D01CBB6A9A00AE0C83 /* MMPTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MMPTestData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -45,10 +51,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		031960501CC5FBF600A56782 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				031960511CC5FC2D00A56782 /* MMPMedia.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		037ABD681CC5BB9B00BE05CC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				037ABD661CC5BB7A00BE05CC /* MMPGraphView+Visuals.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		037ABD691CC5C0C300BE05CC /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				037ABD6A1CC5C0CF00BE05CC /* MMPGraphDataPoint.swift */,
+				037ABD6B1CC5C0CF00BE05CC /* MMPGraphDataSet.swift */,
+				037ABD6C1CC5C0CF00BE05CC /* MMPGraphDelegate.swift */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 		037D04A11CBB694700AE0C83 = {
 			isa = PBXGroup;
 			children = (
 				037D04AC1CBB694700AE0C83 /* MMPGraphView */,
+				037D04C71CBB697800AE0C83 /* MMPGraph */,
 				037D04AB1CBB694700AE0C83 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,7 +103,6 @@
 				037D04B41CBB694700AE0C83 /* Assets.xcassets */,
 				037D04B61CBB694700AE0C83 /* LaunchScreen.storyboard */,
 				037D04B91CBB694700AE0C83 /* Info.plist */,
-				037D04C71CBB697800AE0C83 /* MMPGraph */,
 				037D04D01CBB6A9A00AE0C83 /* MMPTestData.swift */,
 			);
 			path = MMPGraphView;
@@ -79,12 +111,14 @@
 		037D04C71CBB697800AE0C83 /* MMPGraph */ = {
 			isa = PBXGroup;
 			children = (
-				037D04C81CBB697800AE0C83 /* MMPGraphDataPoint.swift */,
-				037BFF051CBE1F470056A024 /* MMPGraphDelegate.swift */,
-				037D04C91CBB697800AE0C83 /* MMPGraphDataSet.swift */,
 				037D04CA1CBB697800AE0C83 /* MMPGraphView.swift */,
+				0319604D1CC5F29200A56782 /* MMPGraphViewController.swift */,
+				037ABD691CC5C0C300BE05CC /* Data */,
+				037ABD681CC5BB9B00BE05CC /* Extensions */,
+				031960501CC5FBF600A56782 /* Resources */,
 			);
-			path = MMPGraph;
+			name = MMPGraph;
+			path = MMPGraphView/MMPGraph;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,6 +182,7 @@
 				037D04B81CBB694700AE0C83 /* LaunchScreen.storyboard in Resources */,
 				037D04B51CBB694700AE0C83 /* Assets.xcassets in Resources */,
 				037D04B31CBB694700AE0C83 /* Main.storyboard in Resources */,
+				031960521CC5FC2D00A56782 /* MMPMedia.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,13 +193,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				037ABD6F1CC5C0CF00BE05CC /* MMPGraphDelegate.swift in Sources */,
 				037D04B01CBB694700AE0C83 /* ViewController.swift in Sources */,
+				0319604E1CC5F29200A56782 /* MMPGraphViewController.swift in Sources */,
 				037D04CD1CBB697800AE0C83 /* MMPGraphView.swift in Sources */,
+				037ABD6D1CC5C0CF00BE05CC /* MMPGraphDataPoint.swift in Sources */,
 				037D04D11CBB6A9A00AE0C83 /* MMPTestData.swift in Sources */,
 				037D04AE1CBB694700AE0C83 /* AppDelegate.swift in Sources */,
-				037BFF061CBE1F470056A024 /* MMPGraphDelegate.swift in Sources */,
-				037D04CC1CBB697800AE0C83 /* MMPGraphDataSet.swift in Sources */,
-				037D04CB1CBB697800AE0C83 /* MMPGraphDataPoint.swift in Sources */,
+				037ABD671CC5BB7A00BE05CC /* MMPGraphView+Visuals.swift in Sources */,
+				037ABD6E1CC5C0CF00BE05CC /* MMPGraphDataSet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

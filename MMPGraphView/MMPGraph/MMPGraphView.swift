@@ -28,31 +28,32 @@ extension NSString
 
 @IBDesignable class MMPGraphView: UIView {
     
-    /// MARK: - Main UI Properties
-    var boldFont    = UIFont.boldSystemFontOfSize(14.0)
-    var regularFont = UIFont.systemFontOfSize(14.0)
-    var lightFont   = UIFont.systemFontOfSize(14.0)
-    
+    // Visual Configuration Objects
+    var graphInsetFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
     @IBInspectable var startColor:UIColor = UIColor(red: 128.0/255.0, green: 182.0/255.0, blue: 248.0/255.0, alpha: 1.0)
     @IBInspectable var endColor:UIColor   = UIColor(red: 50.0/255.0, green: 118.0/255.0, blue: 255.0/255.0, alpha: 1.0)
     
     // Loading Variables
-    var currentlyLoading    = false
+    @IBInspectable var currentlyLoading    = false
     let loadingActivityView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     let loadingDimView      = UIView(frame: CGRectZero)
     
+    // Graph Interaction Objects
     var delegate:MMPGraphDelegate?;
+    @IBInspectable var showTouchTitle  = true
+    @IBInspectable var allowFullScreen = true
+    var fullScreenButton:UIButton?
     
-    var showTouchTitle  = true
-    var graphInsetFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
-    
-    // MARK: – Main Title Objects
+    // Main Title Objects
+    @IBInspectable var titleAlignment     = NSTextAlignment.Center
     var titleLabel:UILabel = UILabel()
     var mainTitleText      = NSAttributedString(string: "")
     
+    // Graph State Objects
     var dataPlots      = [MMPGraphDataPlot]()
     var currentPlotIdx = 0
     var plotSegmentedController:UISegmentedControl?
+    var isFullScreen   = false
     
     // MARK: - Initialize Methods
     
@@ -96,7 +97,7 @@ extension NSString
     func initializeSubViews()
     {
         // Configure and add the title label
-        titleLabel.font           = regularFont
+        titleLabel.font           = MMPGraphView.regularFont()
         titleLabel.textColor      = UIColor.whiteColor()
         titleLabel.textAlignment  = .Center
         titleLabel.attributedText = mainTitleText
@@ -110,8 +111,8 @@ extension NSString
             }
             plotSegmentedController            = UISegmentedControl(items: plotTitles)
             plotSegmentedController!.tintColor = UIColor.whiteColor()
-            plotSegmentedController!.setTitleTextAttributes([NSFontAttributeName : lightFont], forState: .Normal)
-            plotSegmentedController!.setTitleTextAttributes([NSFontAttributeName : boldFont], forState: .Selected)
+            plotSegmentedController!.setTitleTextAttributes([NSFontAttributeName : MMPGraphView.lightFont()], forState: .Normal)
+            plotSegmentedController!.setTitleTextAttributes([NSFontAttributeName : MMPGraphView.boldFont()], forState: .Selected)
             plotSegmentedController!.addTarget(self, action: #selector(MMPGraphView.activePlotValueChanged(_:)), forControlEvents: .ValueChanged)
             plotSegmentedController!.selectedSegmentIndex = 0
             addSubview(plotSegmentedController!)
@@ -126,18 +127,57 @@ extension NSString
         loadingActivityView.hidesWhenStopped = true
         loadingDimView.addSubview(loadingActivityView)
         addSubview(loadingDimView)
+        
+        if (allowFullScreen)
+        {
+            let fullScreenButtonSide:CGFloat = 20.0
+            
+            // Initialize the full screen button and functionality
+            fullScreenButton       = UIButton(type: .InfoDark)
+            fullScreenButton!.tintColor = UIColor.whiteColor()
+            fullScreenButton!.frame     = CGRect(x: CGRectGetWidth(bounds) - (fullScreenButtonSide + 5.0),
+                                                y: CGRectGetHeight(bounds) - (fullScreenButtonSide + 5.0),
+                                                width: fullScreenButtonSide,
+                                                height: fullScreenButtonSide)
+            
+            fullScreenButton!.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin]
+            fullScreenButton!.addTarget(self, action: #selector(MMPGraphView.fullScreenButtonTapped(_:)), forControlEvents: .TouchUpInside)
+            addSubview(fullScreenButton!)
+        }
+    }
+    
+    /**
+     Responsible for copying all of the state attributes from one graph view to another
+     
+     - parameter idealGraph: The MMPGraphView that you are copying the attribute values from
+     */
+    func copyGraphAttributes(idealGraph:MMPGraphView)
+    {
+        titleAlignment   = idealGraph.titleAlignment
+        showTouchTitle   = idealGraph.showTouchTitle
+        currentlyLoading = idealGraph.currentlyLoading
     }
     
     
     // MARK: - View Layout Methods
     
+    func finishLoading(dataPlots:[MMPGraphDataPlot]) {
+        self.dataPlots = dataPlots
+        initializeSubViews()
+        setNeedsDisplay()
+    }
+    
     override func layoutSubviews() {
         
         super.layoutSubviews()
         let labelWidth             = CGRectGetWidth(bounds) * 0.5
-        let titleYPadding:CGFloat  = 8.0
+        let titleYPadding:CGFloat  = isFullScreen ? 15.0 : 8.0
         let labelHeight:CGFloat    = 26.0
-        titleLabel.frame           = CGRect(x: (CGRectGetWidth(bounds)*0.25), y: titleYPadding, width: labelWidth, height: labelHeight)
+        
+        titleLabel.font          = isFullScreen ? MMPGraphView.boldFont(18.0) : MMPGraphView.boldFont()
+        titleLabel.textAlignment = titleAlignment
+        let xOrigin              = (titleAlignment == .Center) ? (CGRectGetWidth(bounds)*0.25) : max(graphInsetFrame.origin.x, 40.0)
+        titleLabel.frame         = CGRect(x: xOrigin, y: titleYPadding, width: labelWidth, height: labelHeight)
         
         loadingDimView.frame       = bounds
         loadingActivityView.center = CGPoint(x: loadingDimView.bounds.width/2.0, y: loadingDimView.bounds.height/2.0)
@@ -151,18 +191,19 @@ extension NSString
         {
             // Set up the title text
             // This is in draw rect becuase it needs to get reset everytime that the segmented controller value changes
+            let titleFont = isFullScreen ? MMPGraphView.boldFont(18.0) : MMPGraphView.boldFont()
             if let secondaryData = dataPlots[currentPlotIdx].secondaryDataSet
             {
                 let primaryDataSet = dataPlots[currentPlotIdx].primaryDataSet
                 let titleAttributeText = NSMutableAttributedString(string: "\(primaryDataSet.dataTitle) vs \(secondaryData.dataTitle)",
-                                                                   attributes: [NSFontAttributeName : boldFont,
+                                                                   attributes: [NSFontAttributeName : titleFont,
                                                                     NSForegroundColorAttributeName : UIColor.whiteColor()])
                 titleAttributeText.addAttributes([NSForegroundColorAttributeName:primaryDataSet.color], range: NSMakeRange(0, primaryDataSet.dataTitle.characters.count))
                 titleAttributeText.addAttributes([NSForegroundColorAttributeName:secondaryData.color], range: NSMakeRange(primaryDataSet.dataTitle.characters.count + 4, secondaryData.dataTitle.characters.count))
                 mainTitleText = titleAttributeText
             }
             else {
-                mainTitleText = NSAttributedString(string: "\(dataPlots[currentPlotIdx].primaryDataSet.dataTitle)", attributes: [NSFontAttributeName : boldFont, NSForegroundColorAttributeName : UIColor.whiteColor()])
+                mainTitleText = NSAttributedString(string: "\(dataPlots[currentPlotIdx].primaryDataSet.dataTitle)", attributes: [NSFontAttributeName : titleFont, NSForegroundColorAttributeName : UIColor.whiteColor()])
             }
         }
         else {
@@ -287,7 +328,7 @@ extension NSString
                 
                 // Calculate and tell the delegate the average
                 dataAverage /= CGFloat(currentDataSet.dataPoints.count)
-                delegate?.averageCalculated(self, graphDataAverage: dataAverage, dataSet: currentDataSet)
+                delegate?.averageCalculated?(self, graphDataAverage: dataAverage, dataSet: currentDataSet)
                 
                 // Draw the 3 horizontal lines and the indicator lablese
                 let graphMidPtY   = graphInsetFrame.origin.y + graphInsetFrame.size.height/2.0
@@ -307,7 +348,7 @@ extension NSString
                     bgLabelValues.insert(NSString.singlePrecisionFloat((averageWeight + maxValue.mmpGraphValue()) / 2.0, attemptToTrim: true), atIndex: 3)
                 }
                 
-                // Draw side markers
+                // MARK: - Draw side markers
                 let bgLinePath    = UIBezierPath()
                 let bgLineWidth   = bounds.width-graphInsetFrame.origin.x
                 counter           = 0
@@ -320,10 +361,11 @@ extension NSString
                     currentLabel.text = bgLabelValues[counter] as String
                     counter += 1
                     currentLabel.textColor = UIColor.whiteColor()
-                    currentLabel.font      = lightFont
+                    currentLabel.font      = MMPGraphView.lightFont()
+                    currentLabel.sizeToFit()
                     
                     // Primary data points are drawn on the right margin, secondary on the left
-                    let xOrigin = (index == 0) ? (bgLineWidth+5.0) : 3.0
+                    let xOrigin = (index == 0) ? (bgLineWidth+5.0) : (graphInsetFrame.origin.x - (CGRectGetWidth(currentLabel.bounds) + 10.0))
                     currentLabel.drawTextInRect(CGRect(x: xOrigin, y: currentBGYPoint-10, width: bounds.width-(bgLineWidth + 5), height: 20))
                 }
                 
@@ -341,7 +383,7 @@ extension NSString
                         let xIndex:Int       = min(Int((CGFloat(i)/CGFloat(xLabelCount-1)) * CGFloat(currentDataSet.dataPoints.count)), currentDataSet.dataPoints.count - 1)
                         let titleLabel       = UILabel()
                         titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
-                        titleLabel.font      = boldFont
+                        titleLabel.font      = MMPGraphView.boldFont()
                         titleLabel.text      = currentDataSet.dataPoints[xIndex].mmpGraphTitle()
                         titleLabel.textAlignment = .Center
                         
@@ -466,4 +508,9 @@ extension NSString
         }
     }
     
+    /// Responsible for reacting to the user tapping the full screen presentation button
+    func fullScreenButtonTapped(sender:UIButton)
+    {
+        delegate?.showFullScreenGraph?(self)
+    }
 }
