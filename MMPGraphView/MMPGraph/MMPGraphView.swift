@@ -128,7 +128,7 @@ extension NSString
         loadingDimView.addSubview(loadingActivityView)
         addSubview(loadingDimView)
         
-        if (allowFullScreen)
+        if (allowFullScreen && fullScreenButton == nil)
         {
             let fullScreenButtonSide:CGFloat = 20.0
             
@@ -188,6 +188,7 @@ extension NSString
     // An empty implementation adversely affects performance during animation.
     override func drawRect(rect: CGRect) {
         
+        fullScreenButton?.hidden = !allowFullScreen
         if currentPlotIdx < dataPlots.count
         {
             // Set up the title text
