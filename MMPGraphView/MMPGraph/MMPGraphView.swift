@@ -133,7 +133,7 @@ extension NSString
             let fullScreenButtonSide:CGFloat = 20.0
             
             // Initialize the full screen button and functionality
-            fullScreenButton       = UIButton(type: .InfoDark)
+            fullScreenButton            = UIButton(type: .Custom)
             fullScreenButton!.tintColor = UIColor.whiteColor()
             fullScreenButton!.frame     = CGRect(x: CGRectGetWidth(bounds) - (fullScreenButtonSide + 5.0),
                                                 y: CGRectGetHeight(bounds) - (fullScreenButtonSide + 5.0),
@@ -141,6 +141,7 @@ extension NSString
                                                 height: fullScreenButtonSide)
             
             fullScreenButton!.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin]
+            fullScreenButton?.setBackgroundImage(MMPGraphView.fullScreenImage(), forState: .Normal)
             fullScreenButton!.addTarget(self, action: #selector(MMPGraphView.fullScreenButtonTapped(_:)), forControlEvents: .TouchUpInside)
             addSubview(fullScreenButton!)
         }

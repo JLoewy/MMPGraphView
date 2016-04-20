@@ -27,4 +27,14 @@ extension MMPGraphView {
         return UIFont.systemFontOfSize(14.0)
     }
     
+    /**
+     arrows example image is made by Vaadin http://www.flaticon.com/authors/vaadin 
+     distributed on http://www.flaticon.com
+     
+     - returns: The UIImage to be used in the full screen button
+     */
+    static func fullScreenImage()->UIImage {
+        return UIImage(named: "arrows")!
+    }
+    
 }
