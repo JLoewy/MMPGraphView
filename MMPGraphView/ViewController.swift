@@ -102,6 +102,11 @@ class ViewController: UIViewController, MMPGraphDelegate {
         dispatch_after(delayTime, dispatch_get_main_queue()) {
             self.programmaticGraphView.finishLoading([TWOdataPlot, THRdataPlot, FVdataPlot])
         }
+        
+        storyboardGraphView.layer.cornerRadius   = 6.0
+        storyboardGraphView.clipsToBounds        = true
+        programmaticGraphView.layer.cornerRadius = 6.0
+        programmaticGraphView.clipsToBounds      = true
     }
     
     // MARK: - MMPGraphDelegate Methods
