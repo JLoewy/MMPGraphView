@@ -48,6 +48,7 @@ extension NSString
     @IBInspectable var titleAlignment     = NSTextAlignment.Center
     var titleLabel:UILabel = UILabel()
     var mainTitleText      = NSAttributedString(string: "")
+    var averageValueLabel  = UILabel()
     
     // Graph State Objects
     var dataPlots      = [MMPGraphDataPlot]()
@@ -99,9 +100,16 @@ extension NSString
         // Configure and add the title label
         titleLabel.font           = MMPGraphView.regularFont()
         titleLabel.textColor      = UIColor.whiteColor()
-        titleLabel.textAlignment  = .Center
+        titleLabel.textAlignment  = titleAlignment
         titleLabel.attributedText = mainTitleText
         addSubview(titleLabel)
+        
+        // Configure and add the average label
+        averageValueLabel.font          = MMPGraphView.regularFont(12.0)
+        averageValueLabel.textColor     = UIColor.whiteColor()
+        averageValueLabel.textAlignment = titleAlignment
+        averageValueLabel.text          = ""
+        insertSubview(averageValueLabel, belowSubview: titleLabel)
         
         if dataPlots.count > 1 {
             // Initialize, configure and add the plot switching segmented controller
@@ -172,13 +180,15 @@ extension NSString
         
         super.layoutSubviews()
         let labelWidth             = CGRectGetWidth(bounds) * 0.5
-        let titleYPadding:CGFloat  = isFullScreen ? 15.0 : 8.0
-        let labelHeight:CGFloat    = 26.0
+        let titleYPadding:CGFloat  = isFullScreen ? 15.0 : 5.0
+        let labelHeight:CGFloat    = 20.0
         
         titleLabel.font          = isFullScreen ? MMPGraphView.boldFont(18.0) : MMPGraphView.boldFont()
         titleLabel.textAlignment = titleAlignment
         let xOrigin              = (titleAlignment == .Center) ? (CGRectGetWidth(bounds)*0.25) : max(graphInsetFrame.origin.x, 40.0)
         titleLabel.frame         = CGRect(x: xOrigin, y: titleYPadding, width: labelWidth, height: labelHeight)
+        averageValueLabel.frame         = CGRect(x: xOrigin, y: CGRectGetMaxY(titleLabel.frame), width: labelWidth, height: 16.0)
+        averageValueLabel.textAlignment = titleAlignment
         
         loadingDimView.frame       = bounds
         loadingActivityView.center = CGPoint(x: loadingDimView.bounds.width/2.0, y: loadingDimView.bounds.height/2.0)
@@ -212,6 +222,7 @@ extension NSString
             mainTitleText = NSAttributedString(string: "")
         }
         titleLabel.attributedText = mainTitleText
+        averageValueLabel.text    = ""
         
         // Calculate the boundaries
         graphInsetFrame.origin.y    = bounds.height * 0.25
@@ -265,7 +276,7 @@ extension NSString
             for currentDataSet in dataSets
             {
                 index += 1
-                let minMaxValues = maxMinElement(currentDataSet.dataPoints)
+                let minMaxValues = currentDataSet.maxMinElement()
                 let maxValue     = minMaxValues.maxValue
                 let minValue     = minMaxValues.minValue
                 
@@ -328,9 +339,10 @@ extension NSString
                     dataAverage += currentPt.mmpGraphValue()
                 }
                 
-                // Calculate and tell the delegate the average
+                // Calculate the average, tell the delegate and update the UI components affected
                 dataAverage /= CGFloat(currentDataSet.dataPoints.count)
                 delegate?.averageCalculated?(self, graphDataAverage: dataAverage, dataSet: currentDataSet)
+                averageValueLabel.text = (averageValueLabel.text!.characters.count > 0) ? "\(averageValueLabel.text!) | \(dataAverage)" : "Average: \(dataAverage)"
                 
                 // Draw the 3 horizontal lines and the indicator lablese
                 let graphMidPtY   = graphInsetFrame.origin.y + graphInsetFrame.size.height/2.0
@@ -421,52 +433,6 @@ extension NSString
                 loadingDimView.hidden = false
             }
         }
-    }
-    
-    /**
-     Responsible for getting the min and max values for a datasets
-     
-     - parameter curArray: The current array of datapoints
-     
-     - returns: A tuple of min max values
-     */
-    func maxMinElement(curArray:[MMPGraphDataPoint])->(minValue:MMPGraphDataPoint, maxValue:MMPGraphDataPoint) {
-        
-        var maxValue = curArray.first!
-        var minValue = curArray.last!
-        
-        if maxValue.mmpGraphValue() < minValue.mmpGraphValue() {
-            maxValue = minValue
-            minValue = curArray.first!
-        }
-        
-        for i in 0..<(curArray.count/2)
-        {
-            let valueA = curArray[i*2]
-            let valueB = curArray[i*2+1]
-            
-            if valueA.mmpGraphValue() <= valueB.mmpGraphValue() {
-                
-                if (valueA.mmpGraphValue() < minValue.mmpGraphValue()) {
-                    minValue = valueA
-                }
-                
-                if (valueB.mmpGraphValue() > maxValue.mmpGraphValue()) {
-                    maxValue = valueB
-                }
-            }
-            else {
-                
-                if valueA.mmpGraphValue() > maxValue.mmpGraphValue() {
-                    maxValue = valueA
-                }
-                
-                if valueB.mmpGraphValue() < minValue.mmpGraphValue() {
-                    minValue = valueB
-                }
-            }
-        }
-        return (minValue, maxValue)
     }
     
     // MARK: - Data Plot Mutation Methods

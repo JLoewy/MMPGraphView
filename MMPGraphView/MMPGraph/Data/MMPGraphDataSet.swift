@@ -46,5 +46,49 @@ class MMPGraphDataSet: NSObject {
         self.dataPoints = dataPoints
         self.color      = color
     }
+    
+    /**
+     Responsible for getting the min and max values for a datasets
+     
+     - returns: A tuple of min max values
+     */
+    func maxMinElement()->(minValue:MMPGraphDataPoint, maxValue:MMPGraphDataPoint) {
+        
+        var maxValue = dataPoints.first!
+        var minValue = dataPoints.last!
+        
+        if maxValue.mmpGraphValue() < minValue.mmpGraphValue() {
+            maxValue = minValue
+            minValue = dataPoints.first!
+        }
+        
+        for i in 0..<(dataPoints.count/2)
+        {
+            let valueA = dataPoints[i*2]
+            let valueB = dataPoints[i*2+1]
+            
+            if valueA.mmpGraphValue() <= valueB.mmpGraphValue() {
+                
+                if (valueA.mmpGraphValue() < minValue.mmpGraphValue()) {
+                    minValue = valueA
+                }
+                
+                if (valueB.mmpGraphValue() > maxValue.mmpGraphValue()) {
+                    maxValue = valueB
+                }
+            }
+            else {
+                
+                if valueA.mmpGraphValue() > maxValue.mmpGraphValue() {
+                    maxValue = valueA
+                }
+                
+                if valueB.mmpGraphValue() < minValue.mmpGraphValue() {
+                    minValue = valueB
+                }
+            }
+        }
+        return (minValue, maxValue)
+    }
 
 }

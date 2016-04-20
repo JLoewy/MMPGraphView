@@ -20,7 +20,11 @@ extension MMPGraphView {
     }
     
     static func regularFont()->UIFont {
-        return UIFont.systemFontOfSize(14.0)
+        return MMPGraphView.regularFont(14.0)
+    }
+    
+    static func regularFont(pointSize:CGFloat)->UIFont {
+        return UIFont.systemFontOfSize(pointSize)
     }
     
     static func lightFont()->UIFont {
