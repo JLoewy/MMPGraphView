@@ -169,6 +169,7 @@ extension NSString
         titleAlignment   = idealGraph.titleAlignment
         showTouchTitle   = idealGraph.showTouchTitle
         currentlyLoading = idealGraph.currentlyLoading
+        currentPlotIdx   = idealGraph.currentPlotIdx
     }
     
     
