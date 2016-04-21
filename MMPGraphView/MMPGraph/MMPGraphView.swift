@@ -98,20 +98,25 @@ extension NSString
     func initializeSubViews()
     {
         // Configure and add the title label
-        titleLabel.font           = MMPGraphView.regularFont()
-        titleLabel.textColor      = UIColor.whiteColor()
-        titleLabel.textAlignment  = titleAlignment
-        titleLabel.attributedText = mainTitleText
-        addSubview(titleLabel)
+        if !subviews.contains(titleLabel) {
+            titleLabel.font           = MMPGraphView.regularFont()
+            titleLabel.textColor      = UIColor.whiteColor()
+            titleLabel.textAlignment  = titleAlignment
+            titleLabel.attributedText = mainTitleText
+            addSubview(titleLabel)
+        }
         
         // Configure and add the average label
-        averageValueLabel.font          = MMPGraphView.regularFont(12.0)
-        averageValueLabel.textColor     = UIColor.whiteColor()
-        averageValueLabel.textAlignment = titleAlignment
-        averageValueLabel.text          = ""
-        insertSubview(averageValueLabel, belowSubview: titleLabel)
+        if !subviews.contains(averageValueLabel) {
+            averageValueLabel.font          = MMPGraphView.regularFont(12.0)
+            averageValueLabel.textColor     = UIColor.whiteColor()
+            averageValueLabel.textAlignment = titleAlignment
+            averageValueLabel.text          = ""
+            insertSubview(averageValueLabel, belowSubview: titleLabel)
+        }
         
-        if dataPlots.count > 1 {
+        if plotSegmentedController == nil && dataPlots.count > 1 {
+            
             // Initialize, configure and add the plot switching segmented controller
             var plotTitles = [String]()
             for currentPlot in dataPlots {
@@ -126,29 +131,28 @@ extension NSString
             addSubview(plotSegmentedController!)
         }
         
-        // Initialize all of the loading indicator objects
-        loadingDimView.frame           = bounds
-        loadingDimView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
-        loadingDimView.hidden          = true
-
-        loadingActivityView.tintColor        = UIColor.whiteColor()
-        loadingActivityView.hidesWhenStopped = true
-        loadingDimView.addSubview(loadingActivityView)
-        addSubview(loadingDimView)
+        if !subviews.contains(loadingDimView) {
+            // Initialize all of the loading indicator objects
+            loadingDimView.frame           = bounds
+            loadingDimView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
+            loadingDimView.hidden          = true
+            
+            loadingActivityView.tintColor        = UIColor.whiteColor()
+            loadingActivityView.hidesWhenStopped = true
+            loadingDimView.addSubview(loadingActivityView)
+            addSubview(loadingDimView)
+        }
         
         if (allowFullScreen && fullScreenButton == nil)
         {
-            let fullScreenButtonSide:CGFloat = 20.0
+            let fullScreenButtonSide:CGFloat = 15.0
             
             // Initialize the full screen button and functionality
             fullScreenButton            = UIButton(type: .Custom)
             fullScreenButton!.tintColor = UIColor.whiteColor()
-            fullScreenButton!.frame     = CGRect(x: CGRectGetWidth(bounds) - (fullScreenButtonSide + 5.0),
-                                                y: CGRectGetHeight(bounds) - (fullScreenButtonSide + 5.0),
-                                                width: fullScreenButtonSide,
-                                                height: fullScreenButtonSide)
+            fullScreenButton!.frame     = CGRect(x: 15.0, y: 15.0, width: fullScreenButtonSide, height: fullScreenButtonSide)
             
-            fullScreenButton!.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin]
+            fullScreenButton!.autoresizingMask = [.FlexibleRightMargin, .FlexibleBottomMargin]
             fullScreenButton?.setBackgroundImage(MMPGraphView.fullScreenImage(), forState: .Normal)
             fullScreenButton!.addTarget(self, action: #selector(MMPGraphView.fullScreenButtonTapped(_:)), forControlEvents: .TouchUpInside)
             addSubview(fullScreenButton!)
