@@ -246,7 +246,12 @@ extension NSString
         if let segmentedController = plotSegmentedController {
             
             let yOffset = ((CGRectGetHeight(bounds) - CGRectGetMaxY(graphInsetFrame)) / 2.0) - (CGRectGetHeight(segmentedController.bounds) / 4.0)
-            segmentedController.frame = CGRect(x: graphInsetFrame.origin.x, y: CGRectGetMaxY(graphInsetFrame) + yOffset, width: graphInsetFrame.size.width, height: segmentedController.frame.size.height)
+            if !isFullScreen {
+                segmentedController.frame = CGRect(x: 15.0, y: CGRectGetMaxY(graphInsetFrame) + yOffset, width: bounds.width - 30.0, height: segmentedController.frame.size.height)
+            }
+            else {
+                segmentedController.frame = CGRect(x: graphInsetFrame.origin.x, y: CGRectGetMaxY(graphInsetFrame) + yOffset, width: graphInsetFrame.size.width, height: segmentedController.frame.size.height)
+            }
         }
         
         // Draw the background gradient
