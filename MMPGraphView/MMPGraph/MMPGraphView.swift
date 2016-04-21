@@ -175,7 +175,8 @@ extension NSString
     // MARK: - View Layout Methods
     
     func finishLoading(dataPlots:[MMPGraphDataPlot]) {
-        self.dataPlots = dataPlots
+        self.dataPlots   = dataPlots
+        currentlyLoading = false
         initializeSubViews()
         setNeedsDisplay()
     }
