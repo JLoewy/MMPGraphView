@@ -393,7 +393,7 @@ extension NSString
                     currentLabel.sizeToFit()
                     
                     // Primary data points are drawn on the right margin, secondary on the left
-                    let xOrigin = (index == 0) ? (bgLineWidth+5.0) : (graphInsetFrame.origin.x - (CGRectGetWidth(currentLabel.bounds) + 10.0))
+                    let xOrigin = (index == 0) ? (bgLineWidth+10.0) : (graphInsetFrame.origin.x - (CGRectGetWidth(currentLabel.bounds) + 10.0))
                     currentLabel.drawTextInRect(CGRect(x: xOrigin, y: currentBGYPoint-10, width: bounds.width-(bgLineWidth + 5), height: 20))
                 }
                 
