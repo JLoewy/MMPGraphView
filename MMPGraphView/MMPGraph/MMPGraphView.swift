@@ -240,7 +240,9 @@ extension NSString
         
         // Now that you have the inset bounds calculated you can layout the segmented controller to sit right underneath it
         if let segmentedController = plotSegmentedController {
-            segmentedController.frame = CGRect(x: graphInsetFrame.origin.x, y: (graphInsetFrame.origin.y + graphInsetFrame.size.height) + 45, width: graphInsetFrame.size.width, height: segmentedController.frame.size.height)
+            
+            let yOffset = ((CGRectGetHeight(bounds) - CGRectGetMaxY(graphInsetFrame)) / 2.0) - (CGRectGetHeight(segmentedController.bounds) / 4.0)
+            segmentedController.frame = CGRect(x: graphInsetFrame.origin.x, y: CGRectGetMaxY(graphInsetFrame) + yOffset, width: graphInsetFrame.size.width, height: segmentedController.frame.size.height)
         }
         
         // Draw the background gradient
@@ -301,8 +303,8 @@ extension NSString
                 if dataSets.count == 1 || (dataSets.count == 2 && index == 0)
                 {
                     let shadowBezier = graphPath.copy() as! UIBezierPath
-                    shadowBezier.addLineToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, CGFloat(currentDataSet.dataPoints.count) - 1.0), y: bounds.height - graphInsetFrame.origin.y))
-                    shadowBezier.addLineToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, 0.0), y: bounds.height - graphInsetFrame.origin.y))
+                    shadowBezier.addLineToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, CGFloat(currentDataSet.dataPoints.count) - 1.0), y: CGRectGetMaxY(graphInsetFrame)))
+                    shadowBezier.addLineToPoint(CGPoint(x: columnXPosition(currentDataSet.dataPoints, 0.0), y: CGRectGetMaxY(graphInsetFrame)))
                     shadowBezier.closePath()
                     shadowBezier.addClip()
                     CGContextDrawLinearGradient(context, gradiant, CGPoint(x: 0, y: graphInsetFrame.origin.y), CGPoint(x: 0, y: bounds.height), CGGradientDrawingOptions.DrawsBeforeStartLocation)
@@ -342,7 +344,9 @@ extension NSString
                 // Calculate the average, tell the delegate and update the UI components affected
                 dataAverage /= CGFloat(currentDataSet.dataPoints.count)
                 delegate?.averageCalculated?(self, graphDataAverage: dataAverage, dataSet: currentDataSet)
-                averageValueLabel.text = (averageValueLabel.text!.characters.count > 0) ? "\(averageValueLabel.text!) | \(dataAverage)" : "Average: \(dataAverage)"
+                
+                let avgString = NSString.singlePrecisionFloat(dataAverage, attemptToTrim: true)
+                averageValueLabel.text = (averageValueLabel.text!.characters.count > 0) ? "\(averageValueLabel.text!) | \(avgString)" : "Average: \(avgString)"
                 
                 // Draw the 3 horizontal lines and the indicator lablese
                 let graphMidPtY   = graphInsetFrame.origin.y + graphInsetFrame.size.height/2.0

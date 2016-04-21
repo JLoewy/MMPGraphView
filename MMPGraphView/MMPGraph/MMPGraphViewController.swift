@@ -30,6 +30,21 @@ class MMPGraphViewController: UIViewController {
         return .Landscape
     }
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .Fade)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .Fade)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         graphView.finishLoading(dataPlots)
@@ -53,5 +68,5 @@ class MMPGraphViewController: UIViewController {
     func closeButtonTapped(sender:UIButton) {
         dismissViewControllerAnimated(true, completion: nil)
     }
-
+    
 }
