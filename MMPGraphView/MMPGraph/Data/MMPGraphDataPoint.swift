@@ -26,3 +26,24 @@ import UIKit
     func mmpGraphTitle()->String
     
 }
+
+/// Generic data object that is designed to feed the GraphDataPoint data source
+class MMPGraphData <MMPGraphDataPoint> {
+    
+    private let title:String
+    private let value:CGFloat
+    
+    init(title:String, value:CGFloat)
+    {
+        self.title = title;
+        self.value = value;
+    }
+    
+    func mmpGraphTitle() -> String {
+        return self.title
+    }
+    
+    func mmpGraphValue() -> CGFloat {
+        return self.value
+    }
+}
