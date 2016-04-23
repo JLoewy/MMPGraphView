@@ -403,6 +403,7 @@ extension NSString
                 bgLinePath.stroke()
                 
                 // Draw the x axis labels
+                var previousXAxisFrame  = CGRectZero
                 let xLabelWidth:CGFloat = 80.0
                 let xLabelCount:Int     = min(currentDataSet.dataPoints.count, 6)
                 if xLabelCount > 1 && index == 0 // Currently only draw the primary data plots x label
@@ -418,7 +419,13 @@ extension NSString
                         
                         let xOrigin:CGFloat = columnXPosition(currentDataSet.dataPoints, CGFloat(xIndex)) - (xLabelWidth/2.0)
                         let yOrigin:CGFloat = CGRectGetMaxY(graphInsetFrame) + 10.0
-                        titleLabel.drawTextInRect(CGRect(x: xOrigin, y: yOrigin, width: xLabelWidth, height: 20.0))
+                        
+                        var currentXAxisFrame = CGRect(x: xOrigin, y: yOrigin, width: xLabelWidth, height: 20.0)
+                        if CGRectIntersectsRect(previousXAxisFrame, currentXAxisFrame) {
+                            currentXAxisFrame.origin.y += 13
+                        }
+                        previousXAxisFrame = currentXAxisFrame
+                        titleLabel.drawTextInRect(currentXAxisFrame)
                     }
                 }
             }
