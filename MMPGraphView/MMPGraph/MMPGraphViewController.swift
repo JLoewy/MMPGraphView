@@ -44,6 +44,10 @@ class MMPGraphViewController: UIViewController {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .Fade)
     }
     
+    override func viewDidLayoutSubviews() {
+        graphView.setNeedsDisplay()
+        graphView.layoutIfNeeded()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

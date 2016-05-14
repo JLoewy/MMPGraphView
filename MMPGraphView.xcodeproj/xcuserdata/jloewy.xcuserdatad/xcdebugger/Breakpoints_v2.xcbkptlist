@@ -19,13 +19,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MMPGraphView/MMPGraph/MMPGraphViewController.swift"
-            timestampString = "482807882.035446"
+            filePath = "MMPGraphView/MMPGraph/MMPGraphView.swift"
+            timestampString = "482816427.543837"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "layoutSubviews()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
